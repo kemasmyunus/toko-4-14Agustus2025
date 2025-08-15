@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 14, 2025 at 10:25 AM
+-- Generation Time: Aug 15, 2025 at 04:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -35,23 +35,24 @@ CREATE TABLE `barang` (
   `varian` varchar(20) NOT NULL,
   `brand` varchar(20) NOT NULL,
   `kategori` varchar(20) NOT NULL,
-  `harga_jual_default` decimal(10,0) NOT NULL
+  `harga_jual_default` decimal(10,0) NOT NULL,
+  `sn` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `barang`
 --
 
-INSERT INTO `barang` (`id_barang`, `kode_barang`, `sku`, `nama_barang`, `varian`, `brand`, `kategori`, `harga_jual_default`) VALUES
-(1, 'BRG001', 'SKU001', 'Samsung Galaxy A14', '4/64GB', 'Samsung', 'HP', 2500000),
-(11, 'BRG002', 'SKU002', 'Xiaomi Redmi Note 12', '6/128GB', 'Xiaomi', 'HP', 3200000),
-(12, 'BRG003', 'SKU003', 'iPhone 13', '128GB', 'Apple', 'HP', 13000000),
-(13, 'BRG004', 'SKU004', 'Oppo A57', '4/64GB', 'Oppo', 'HP', 2200000),
-(14, 'BRG005', 'SKU005', 'Vivo Y21', '4/64GB', 'Vivo', 'HP', 2100000),
-(15, 'BRG006', 'SKU006', 'Charger Fast Charging', '25W', 'Anker', 'Aksesoris', 150000),
-(16, 'BRG007', 'SKU007', 'Headset Bluetooth', 'v5.0', 'Sony', 'Aksesoris', 350000),
-(17, 'BRG008', 'SKU008', 'Powerbank', '20000mAh', 'Xiaomi', 'Aksesoris', 250000),
-(18, 'BRG009', 'SKU009', 'Casing HP', 'Softcase', 'Ugreen', 'Aksesoris', 50000);
+INSERT INTO `barang` (`id_barang`, `kode_barang`, `sku`, `nama_barang`, `varian`, `brand`, `kategori`, `harga_jual_default`, `sn`) VALUES
+(1, 'BRG001', 'SKU001', 'Samsung Galaxy A14', '4/64GB', 'Samsung', 'HP', 2500000, 1),
+(11, 'BRG002', 'SKU002', 'Xiaomi Redmi Note 12', '6/128GB', 'Xiaomi', 'HP', 3200000, 1),
+(12, 'BRG003', 'SKU003', 'iPhone 13', '128GB', 'Apple', 'HP', 13000000, 1),
+(13, 'BRG004', 'SKU004', 'Oppo A57', '4/64GB', 'Oppo', 'HP', 2200000, 1),
+(14, 'BRG005', 'SKU005', 'Vivo Y21', '4/64GB', 'Vivo', 'HP', 2100000, 1),
+(15, 'BRG006', 'SKU006', 'Charger Fast Charging', '25W', 'Anker', 'Aksesoris', 150000, 0),
+(16, 'BRG007', 'SKU007', 'Headset Bluetooth', 'v5.0', 'Sony', 'Aksesoris', 350000, 0),
+(17, 'BRG008', 'SKU008', 'Powerbank', '20000mAh', 'Xiaomi', 'Aksesoris', 250000, 0),
+(18, 'BRG009', 'SKU009', 'Casing HP', 'Softcase', 'Ugreen', 'Aksesoris', 50000, 0);
 
 -- --------------------------------------------------------
 
@@ -63,7 +64,6 @@ CREATE TABLE `detail_pembelian` (
   `id_detail_pembelian` int(11) NOT NULL,
   `id_pembelian` int(11) NOT NULL,
   `id_barang` int(11) NOT NULL,
-  `imei_sn` varchar(20) NOT NULL,
   `jumlah` int(11) NOT NULL,
   `harga_beli` decimal(10,0) NOT NULL,
   `harga_jual` decimal(10,0) NOT NULL,
@@ -99,7 +99,8 @@ INSERT INTO `detail_penjualan` (`id_detail_penjualan`, `id_penjualan`, `id_baran
 (3, 2, 1, '', 4, 2500000, 0, 0, 0, 10000000),
 (4, 2, 11, '', 1, 3200000, 0, 0, 0, 3200000),
 (5, 2, 12, '', 1, 13000000, 0, 0, 0, 13000000),
-(6, 2, 13, '', 1, 2200000, 0, 0, 0, 2200000);
+(6, 2, 13, '', 1, 2200000, 0, 0, 0, 2200000),
+(7, 3, 18, '', 2, 50000, 0, 0, 0, 100000);
 
 -- --------------------------------------------------------
 
@@ -112,6 +113,14 @@ CREATE TABLE `gudang` (
   `nama_gudang` varchar(20) NOT NULL,
   `lokasi` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `gudang`
+--
+
+INSERT INTO `gudang` (`id_gudang`, `nama_gudang`, `lokasi`) VALUES
+(1, 'gudang pasar lama', 'pasar lamaa'),
+(2, 'gudang belitung', 'beltiung');
 
 -- --------------------------------------------------------
 
@@ -132,7 +141,8 @@ CREATE TABLE `pegawai` (
 --
 
 INSERT INTO `pegawai` (`id_pegawai`, `nama_pegawai`, `username`, `password`, `peran`) VALUES
-(1, 'kaka', 'kaka', 'kaka', 'kasir');
+(1, 'kaka', 'kaka', '123', 'kasir'),
+(2, 'rika', 'rika', '321', 'kasir');
 
 -- --------------------------------------------------------
 
@@ -151,7 +161,6 @@ CREATE TABLE `pelanggan` (
 --
 
 INSERT INTO `pelanggan` (`id_pelanggan`, `nama_pelanggan`, `kontak`) VALUES
-(1, '', 'a'),
 (2, 'yuki', '123'),
 (3, 'kira', '123');
 
@@ -193,7 +202,59 @@ CREATE TABLE `penjualan` (
 
 INSERT INTO `penjualan` (`id_penjualan`, `tanggal_penjualan`, `id_pelanggan`, `id_pegawai`, `metode_pembayaran`, `total`, `diskon`, `subtotal`, `sisa_bayar`) VALUES
 (1, '2025-08-14', 2, 1, 'cash', 4700000, 20000, 4680000, -1000000),
-(2, '2025-08-14', 2, 1, 'bank', 28400000, 20000, 28380000, 0);
+(2, '2025-08-14', 2, 1, 'bank', 28400000, 20000, 28380000, 0),
+(3, '2025-08-15', 3, 2, 'ewallet', 100000, 0, 100000, 99508);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `potongan_barang`
+--
+
+CREATE TABLE `potongan_barang` (
+  `id_potongan` int(11) NOT NULL,
+  `id_barang` int(11) NOT NULL,
+  `nama_potongan` varchar(100) NOT NULL,
+  `nilai_potongan` int(11) NOT NULL,
+  `tanggal_mulai` date NOT NULL,
+  `tanggal_selesai` date NOT NULL,
+  `status` enum('aktif','nonaktif') DEFAULT 'aktif'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `potongan_barang`
+--
+
+INSERT INTO `potongan_barang` (`id_potongan`, `id_barang`, `nama_potongan`, `nilai_potongan`, `tanggal_mulai`, `tanggal_selesai`, `status`) VALUES
+(1, 13, '123', 123, '2025-08-01', '2025-08-14', 'nonaktif'),
+(2, 18, '123', 123, '2025-08-14', '2025-08-16', 'aktif'),
+(3, 18, '123', 123, '2025-08-14', '2025-08-27', 'aktif');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `potongan_barang_riwayat`
+--
+
+CREATE TABLE `potongan_barang_riwayat` (
+  `id_riwayat` int(11) NOT NULL,
+  `id_potongan` int(11) NOT NULL,
+  `id_barang` int(11) NOT NULL,
+  `nama_potongan` varchar(100) NOT NULL,
+  `nilai_potongan` int(11) NOT NULL,
+  `tanggal_mulai` date NOT NULL,
+  `tanggal_selesai` date NOT NULL,
+  `status_awal` enum('aktif','nonaktif') DEFAULT NULL,
+  `status_akhir` enum('aktif','nonaktif') DEFAULT NULL,
+  `tanggal_perubahan` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `potongan_barang_riwayat`
+--
+
+INSERT INTO `potongan_barang_riwayat` (`id_riwayat`, `id_potongan`, `id_barang`, `nama_potongan`, `nilai_potongan`, `tanggal_mulai`, `tanggal_selesai`, `status_awal`, `status_akhir`, `tanggal_perubahan`) VALUES
+(1, 1, 13, '123', 123, '2025-08-01', '2025-08-14', 'aktif', 'nonaktif', '2025-08-15 02:05:11');
 
 -- --------------------------------------------------------
 
@@ -223,6 +284,13 @@ CREATE TABLE `stok` (
   `jumlah` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `stok`
+--
+
+INSERT INTO `stok` (`id_stok`, `id_barang`, `id_gudang`, `jumlah`) VALUES
+(3, 18, 1, 98);
+
 -- --------------------------------------------------------
 
 --
@@ -237,6 +305,13 @@ CREATE TABLE `stok_sn` (
   `status` enum('tersedia','terjual') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `stok_sn`
+--
+
+INSERT INTO `stok_sn` (`id_stok_sn`, `id_barang`, `id_gudang`, `imei_sn`, `status`) VALUES
+(2, 11, 1, '0001', 'tersedia');
+
 -- --------------------------------------------------------
 
 --
@@ -248,6 +323,13 @@ CREATE TABLE `supplier` (
   `nama_supplier` varchar(20) NOT NULL,
   `kontak` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `supplier`
+--
+
+INSERT INTO `supplier` (`id_supplier`, `nama_supplier`, `kontak`) VALUES
+(1, 'asdf', 'fda');
 
 --
 -- Indexes for dumped tables
@@ -311,6 +393,19 @@ ALTER TABLE `penjualan`
   ADD KEY `id_pegawai` (`id_pegawai`);
 
 --
+-- Indexes for table `potongan_barang`
+--
+ALTER TABLE `potongan_barang`
+  ADD PRIMARY KEY (`id_potongan`),
+  ADD KEY `id_barang` (`id_barang`);
+
+--
+-- Indexes for table `potongan_barang_riwayat`
+--
+ALTER TABLE `potongan_barang_riwayat`
+  ADD PRIMARY KEY (`id_riwayat`);
+
+--
 -- Indexes for table `rekonsiliasi`
 --
 ALTER TABLE `rekonsiliasi`
@@ -359,25 +454,25 @@ ALTER TABLE `detail_pembelian`
 -- AUTO_INCREMENT for table `detail_penjualan`
 --
 ALTER TABLE `detail_penjualan`
-  MODIFY `id_detail_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_detail_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `gudang`
 --
 ALTER TABLE `gudang`
-  MODIFY `id_gudang` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_gudang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pegawai`
 --
 ALTER TABLE `pegawai`
-  MODIFY `id_pegawai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pegawai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pelanggan`
 --
 ALTER TABLE `pelanggan`
-  MODIFY `id_pelanggan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_pelanggan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
@@ -389,7 +484,19 @@ ALTER TABLE `pembelian`
 -- AUTO_INCREMENT for table `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `potongan_barang`
+--
+ALTER TABLE `potongan_barang`
+  MODIFY `id_potongan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `potongan_barang_riwayat`
+--
+ALTER TABLE `potongan_barang_riwayat`
+  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `rekonsiliasi`
@@ -401,19 +508,19 @@ ALTER TABLE `rekonsiliasi`
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `id_stok` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_stok` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `stok_sn`
 --
 ALTER TABLE `stok_sn`
-  MODIFY `id_stok_sn` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_stok_sn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -447,6 +554,12 @@ ALTER TABLE `pembelian`
 ALTER TABLE `penjualan`
   ADD CONSTRAINT `penjualan_ibfk_1` FOREIGN KEY (`id_pelanggan`) REFERENCES `pelanggan` (`id_pelanggan`),
   ADD CONSTRAINT `penjualan_ibfk_2` FOREIGN KEY (`id_pegawai`) REFERENCES `pegawai` (`id_pegawai`);
+
+--
+-- Constraints for table `potongan_barang`
+--
+ALTER TABLE `potongan_barang`
+  ADD CONSTRAINT `potongan_barang_ibfk_1` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id_barang`);
 
 --
 -- Constraints for table `rekonsiliasi`
