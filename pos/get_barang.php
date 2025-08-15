@@ -1,15 +1,24 @@
 <?php
 include "../koneksi.php";
-$kode = $_GET['kode'] ?? '';
-$q = mysqli_query($koneksi, "SELECT id_barang, kode_barang, sku, nama_barang, harga_jual_default,
-    (SELECT COUNT(*) FROM stok_sn WHERE id_barang=barang.id_barang AND status='tersedia') AS stok_sn
-    FROM barang
-    WHERE kode_barang='$kode' OR sku='$kode' LIMIT 1");
+$kode = $_GET['kode'];
 
+$q = mysqli_query($koneksi, "SELECT * FROM barang WHERE kode_barang='$kode' OR sku='$kode'");
 if(mysqli_num_rows($q) > 0){
     $barang = mysqli_fetch_assoc($q);
-    $barang['imei_required'] = ($barang['stok_sn'] > 0);
+    
+    // Ambil potongan barang
+    $pot = mysqli_query($koneksi, "SELECT nama_potongan, nilai_potongan 
+                                   FROM potongan_barang 
+                                   WHERE id_barang={$barang['id_barang']}");
+    $potongan = [];
+    while($p = mysqli_fetch_assoc($pot)){
+        $potongan[] = $p;
+    }
+
+    $barang['potongan_list'] = $potongan;
+
     echo json_encode($barang);
 } else {
     echo "";
 }
+?>

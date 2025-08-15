@@ -138,11 +138,24 @@ $("#scan_kode").on("keypress", function(e){
 });
 
 function tambahKeranjang(barang, imei){
+    let totalPotongan = 0;
+    let potonganList = [];
+    if (barang.potongan_list && barang.potongan_list.length > 0) {
+        potonganList = barang.potongan_list;
+        totalPotongan = potonganList.reduce((sum, p) => sum + parseInt(p.nilai_potongan), 0);
+    }
+
     let index = keranjang.findIndex(b => b.id_barang == barang.id_barang && b.imei_sn == imei);
     if(index > -1){
         keranjang[index].jumlah += 1;
     } else {
-        keranjang.push({...barang, imei_sn: imei, jumlah: 1});
+        keranjang.push({
+            ...barang, 
+            imei_sn: imei, 
+            jumlah: 1,
+            potongan_list: potonganList,
+            total_potongan: totalPotongan
+        });
     }
     renderKeranjang();
 }
@@ -150,13 +163,15 @@ function tambahKeranjang(barang, imei){
 function renderKeranjang(){
     let html = "";
     keranjang.forEach((item, i) => {
-        let total = item.harga_jual_default * item.jumlah;
+        let totalPotonganItem = item.total_potongan * item.jumlah;
+        let total = (item.harga_jual_default * item.jumlah) - totalPotonganItem;
         html += `<tr>
             <td>${item.kode_barang}</td>
             <td>${item.nama_barang}</td>
             <td>${item.harga_jual_default}</td>
             <td>${item.imei_sn}</td>
             <td>${item.jumlah}</td>
+            <td>${totalPotonganItem}</td>
             <td>${total}</td>
             <td><button onclick="hapusItem(${i})">X</button></td>
         </tr>`;
@@ -174,12 +189,15 @@ function hapusItem(i){
     renderKeranjang();
 }
 
-
 function hitungTotal(){
-    let total = keranjang.reduce((sum, item) => sum + (item.harga_jual_default * item.jumlah), 0);
-    let diskon = parseInt($("#diskon").val()) || 0;
-    let totalAkhir = total - diskon;
+    let totalHarga = keranjang.reduce((sum, item) => sum + (item.harga_jual_default * item.jumlah), 0);
+    let totalPotongan = keranjang.reduce((sum, item) => sum + (item.total_potongan * item.jumlah), 0);
+    
+    let diskonManual = parseInt($("#diskon").val()) || 0; // diskon tambahan manual
+    
+    let totalAkhir = totalHarga - totalPotongan - diskonManual;
     $("#total").val(totalAkhir);
+    
     let bayar = parseInt($("#bayar").val()) || 0;
     $("#sisa").val(totalAkhir - bayar);
 }
