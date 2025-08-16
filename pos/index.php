@@ -44,9 +44,10 @@ ini_set('display_errors', 1);
         <br><br>
 
         <!-- INPUT BARANG -->
-        <label>Scan / Input Kode Barang:</label>
-        <input type="text" id="scan_kode" placeholder="SKU/kode_barang">
-        <br><br>
+        <label>Scan / Input Kode Barang atau IMEI/SN:</label>
+        <input type="text" id="scan_kode" placeholder="SKU/kode_barang/IMEI/SN">
+        <div id="scan_msg" style="color:red;min-height:18px;margin-bottom:8px;"></div>
+        <br>
 
         <table class="table-cart" id="tabel_keranjang">
             <thead>
@@ -65,9 +66,6 @@ ini_set('display_errors', 1);
 
         <!-- FOOTER -->
         <br>
-        <label>Diskon (Rp):</label>
-        <input type="number" id="diskon" value="0"><br><br>
-
         <label>Total:</label>
         <input type="text" id="total" readonly><br><br>
 
@@ -115,23 +113,47 @@ $("#form_pelanggan").on("submit", function(e){
 $("#scan_kode").on("keypress", function(e){
     if(e.which == 13){
         e.preventDefault();
-        let kode = $(this).val();
+        let kode = $(this).val().trim();
+        $("#scan_msg").text(""); // reset pesan
+        if(!kode) return;
+
         $.get("get_barang.php", {kode: kode}, function(res){
-            if(res){
-                let barang = JSON.parse(res);
-                if(barang.imei_required){
-                    $.get("get_imei.php", {id_barang: barang.id_barang}, function(list){
-                        let imei = prompt("Pilih IMEI:\n" + list);
-                        if(imei){
-                            tambahKeranjang(barang, imei);
-                        }
-                    });
+            let barang = null;
+            try { barang = JSON.parse(res); } catch(e) {}
+            if(barang && typeof barang.sn !== "undefined") {
+                if(barang.sn == "1"){
+                    $("#scan_msg").text("Barang ini ber-SN. Silakan masukkan IMEI/SN (imei1/imei2) pada kolom scan.");
                 } else {
                     tambahKeranjang(barang, "");
+                    $("#scan_kode").val("");
                 }
-                $("#scan_kode").val("");
             } else {
-                alert("Barang tidak ditemukan!");
+                // Jika tidak ditemukan di barang, cek ke stok_sn (IMEI/SN)
+                $.get("get_imei_barang.php", {imei: kode}, function(res2){
+                    if(res2){
+                        let obj = JSON.parse(res2);
+                        if(obj.barang && obj.stok_sn){
+                            let barang = obj.barang;
+                            let imei = obj.stok_sn.imei_sn;
+                            // Pastikan barang SN
+                            if(barang.sn == "1"){
+                                // Cek apakah sudah di keranjang
+                                let idx = keranjang.findIndex(b => b.id_barang == barang.id_barang && b.imei_sn == imei);
+                                if(idx > -1){
+                                    $("#scan_msg").text("IMEI/SN sudah di keranjang!");
+                                } else {
+                                    tambahKeranjang(barang, imei);
+                                    $("#scan_kode").val("");
+                                    $("#scan_msg").text(""); // hapus pesan jika berhasil input IMEI/SN
+                                }
+                            }
+                        } else {
+                            $("#scan_msg").text("IMEI/SN tidak ditemukan!");
+                        }
+                    } else {
+                        $("#scan_msg").text("Kode/IMEI/SN tidak ditemukan!");
+                    }
+                });
             }
         });
     }
@@ -145,10 +167,12 @@ function tambahKeranjang(barang, imei){
         totalPotongan = potonganList.reduce((sum, p) => sum + parseInt(p.nilai_potongan), 0);
     }
 
-    let index = keranjang.findIndex(b => b.id_barang == barang.id_barang && b.imei_sn == imei);
-    if(index > -1){
-        keranjang[index].jumlah += 1;
-    } else {
+    if(barang.sn == "1"){
+        let index = keranjang.findIndex(b => b.id_barang == barang.id_barang && b.imei_sn == imei);
+        if(index > -1){
+            $("#scan_msg").text("IMEI/SN sudah di keranjang!");
+            return;
+        }
         keranjang.push({
             ...barang, 
             imei_sn: imei, 
@@ -156,6 +180,19 @@ function tambahKeranjang(barang, imei){
             potongan_list: potonganList,
             total_potongan: totalPotongan
         });
+    } else {
+        let index = keranjang.findIndex(b => b.id_barang == barang.id_barang && b.imei_sn == "");
+        if(index > -1){
+            keranjang[index].jumlah += 1;
+        } else {
+            keranjang.push({
+                ...barang, 
+                imei_sn: "", 
+                jumlah: 1,
+                potongan_list: potonganList,
+                total_potongan: totalPotongan
+            });
+        }
     }
     renderKeranjang();
 }
@@ -177,32 +214,51 @@ function renderKeranjang(){
         </tr>`;
     });
     $("#tabel_keranjang tbody").html(html);
+    renderDiskonTable();
     hitungTotal();
 }
 
 function hapusItem(i){
-    if (keranjang[i].jumlah > 1) {
-        keranjang[i].jumlah -= 1; // kurangi 1
+    if (keranjang[i].sn == "1" || keranjang[i].jumlah == 1) {
+        keranjang.splice(i, 1);
     } else {
-        keranjang.splice(i, 1); // hapus item kalau jumlah tinggal 1
+        keranjang[i].jumlah -= 1;
     }
     renderKeranjang();
+}
+
+function renderDiskonTable(){
+    let html = `<table class="table-cart"><thead><tr>
+        <th>Nama Barang</th><th>Diskon</th>
+    </tr></thead><tbody>`;
+    let totalPotongan = 0;
+    keranjang.forEach(item => {
+        if(item.potongan_list && item.potongan_list.length > 0){
+            item.potongan_list.forEach(pot => {
+                html += `<tr>
+                    <td>${item.nama_barang}</td>
+                    <td>${pot.nama_potongan}: Rp${pot.nilai_potongan}</td>
+                </tr>`;
+                totalPotongan += parseInt(pot.nilai_potongan) * item.jumlah;
+            });
+        }
+    });
+    html += `<tr><td><b>Total Potongan</b></td><td><b>Rp${totalPotongan}</b></td></tr>`;
+    html += "</tbody></table>";
+    $("#tabel_diskon").remove();
+    $(html).attr("id","tabel_diskon").insertAfter("#tabel_keranjang");
 }
 
 function hitungTotal(){
     let totalHarga = keranjang.reduce((sum, item) => sum + (item.harga_jual_default * item.jumlah), 0);
     let totalPotongan = keranjang.reduce((sum, item) => sum + (item.total_potongan * item.jumlah), 0);
-    
-    let diskonManual = parseInt($("#diskon").val()) || 0; // diskon tambahan manual
-    
-    let totalAkhir = totalHarga - totalPotongan - diskonManual;
+    let totalAkhir = totalHarga - totalPotongan;
     $("#total").val(totalAkhir);
-    
     let bayar = parseInt($("#bayar").val()) || 0;
     $("#sisa").val(totalAkhir - bayar);
 }
 
-$("#diskon, #bayar").on("input", hitungTotal);
+$("#bayar").on("input", hitungTotal);
 
 // Simpan transaksi
 $("#simpan_transaksi").click(function(){
@@ -214,7 +270,6 @@ $("#simpan_transaksi").click(function(){
         pelanggan: $("#pelanggan").val(),
         pegawai: $("#pegawai").val(),
         metode: $("#metode").val(),
-        diskon: $("#diskon").val(),
         bayar: $("#bayar").val(),
         sisa: $("#sisa").val(),
         keranjang: JSON.stringify(keranjang)
