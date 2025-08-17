@@ -26,5 +26,3 @@ while($row = mysqli_fetch_assoc($res)){
 mysqli_query($koneksi, "UPDATE potongan_barang 
                         SET status='nonaktif' 
                         WHERE tanggal_selesai < '$today' AND status='aktif'");
-
-echo "Proses auto nonaktif diskon selesai.";
