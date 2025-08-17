@@ -208,9 +208,8 @@ function renderKeranjang(){
             <td>${item.harga_jual_default}</td>
             <td>${item.imei_sn}</td>
             <td>${item.jumlah}</td>
-            <td>${totalPotonganItem}</td>
             <td>${total}</td>
-            <td><button onclick="hapusItem(${i})">X</button></td>
+            <td><button onclick="hapusItem(${i})" class="btn-remove">X</button></td>
         </tr>`;
     });
     $("#tabel_keranjang tbody").html(html);

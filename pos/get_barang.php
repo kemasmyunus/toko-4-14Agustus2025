@@ -19,6 +19,14 @@ if(mysqli_num_rows($q) > 0){
     }
     $barang['potongan_list'] = $potongan;
 
+    if($barang['sn'] === "0") {
+        // Cek stok
+        $stok = mysqli_query($koneksi, "SELECT jumlah FROM stok WHERE id_barang='{$barang['id_barang']}' AND jumlah > 0");
+        if(mysqli_num_rows($stok) == 0){
+            echo ""; // Barang tidak ada di stok
+            exit;
+        }
+    }
     echo json_encode($barang);
 } else {
     echo "";
