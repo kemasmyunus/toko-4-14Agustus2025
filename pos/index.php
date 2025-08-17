@@ -7,88 +7,211 @@ ini_set('display_errors', 1);
 <html>
 <head>
     <title>POS Kasir</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #000000;
+        }
+        .header {
+            background: #f5f5f5;
+            color: #000000;
+            padding: 16px 24px;
+            font-size: 22px;
+            font-weight: bold;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 220px;
+            background: #f5f5f5;
+            padding: 0;
+            border-right: 1px solid #e0e0e0;
+            min-height: 100vh;
+        }
+        .sidebar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .sidebar li {
+            margin: 0;
+        }
+        .sidebar a {
+            display: block;
+            color: #000000;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-left: 4px solid transparent;
+        }
+        .sidebar a.active, .sidebar a:hover {
+            background: #ffffff;
+            border-left: 4px solid #000000;
+            font-weight: bold;
+        }
+        .main-content {
+            flex: 1;
+            background: #ffffff;
+            padding: 32px 40px;
+        }
+        .form-pos, .form-pelanggan {
+            border: 1px solid #f5f5f5;
+            background: #ffffff;
+            padding: 20px 24px 18px 24px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        .form-pos {
+            width: 60%;
+            margin-right: 24px;
+        }
+        .form-pelanggan {
+            width: 40%;
+        }
+        .flex-row {
+            display: flex;
+            gap: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        select, input[type="number"], input[type="date"], input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 16px;
+            border: 1px solid #f5f5f5;
+            border-radius: 3px;
+            background: #f5f5f5;
+            color: #000000;
+            font-size: 15px;
+        }
+        button, .btn-remove {
+            background: #f5f5f5;
+            color: #000000;
+            border: 1px solid #e0e0e0;
+            padding: 8px 18px;
+            border-radius: 3px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover, .btn-remove:hover {
+            background: #ffffff;
+            border-left: 4px solid #000000;
+            font-weight: bold;
+        }
+        table.table-cart {
+            border-collapse: collapse;
+            width: 100%;
+            background: #ffffff;
+            margin-bottom: 18px;
+        }
+        table.table-cart th, table.table-cart td {
+            border: 1px solid #f5f5f5;
+            padding: 8px;
+            text-align: center;
+            color: #000000;
+        }
+        table.table-cart th {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+        #tabel_diskon {
+            margin-top: 12px;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-
-<h2>Halaman POS</h2>
-<div class="container">
-    <!-- FORM KIRI: POS -->
-    <div class="form-pos">
-        <h3>Transaksi</h3>
-
-        <!-- HEADER -->
-        <label>Pelanggan:</label>
-        <select id="pelanggan"></select>
-        <br><br>
-
-        <label>Pegawai/Kasir:</label>
-        <select id="pegawai">
-            <?php
-            $pg = mysqli_query($koneksi, "SELECT * FROM pegawai ORDER BY nama_pegawai");
-            while($p = mysqli_fetch_assoc($pg)){
-                echo "<option value='{$p['id_pegawai']}'>{$p['nama_pegawai']}</option>";
-            }
-            ?>
-        </select>
-        <br><br>
-
-        <label>Metode Pembayaran:</label>
-        <select id="metode" name="metode">
-            <option value="cash">Cash</option>
-            <option value="qris">QRIS</option>
-            <option value="ewallet">E-Wallet</option>
-            <option value="bank">Bank Transfer</option>
-        </select>
-        <br><br>
-
-        <!-- INPUT BARANG -->
-        <label>Scan / Input Kode Barang atau IMEI/SN:</label>
-        <input type="text" id="scan_kode" placeholder="SKU/kode_barang/IMEI/SN">
-        <div id="scan_msg" style="color:red;min-height:18px;margin-bottom:8px;"></div>
-        <br>
-
-        <table class="table-cart" id="tabel_keranjang">
-            <thead>
-                <tr>
-                    <th>Kode</th>
-                    <th>Nama Barang</th>
-                    <th>Harga</th>
-                    <th>IMEI/SN</th>
-                    <th>Jumlah</th>
-                    <th>Total</th>
-                    <th>Hapus</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <!-- FOOTER -->
-        <br>
-        <label>Total:</label>
-        <input type="text" id="total" readonly><br><br>
-
-        <label>Bayar:</label>
-        <input type="number" id="bayar" value="0"><br><br>
-
-        <label>Sisa Bayar:</label>
-        <input type="text" id="sisa" readonly><br><br>
-
-        <button id="simpan_transaksi">Simpan Transaksi</button>
+    <div class="header">Toko4 - POS Kasir</div>
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="../barang">barang</a></li>
+                <li><a href="../detail_pembelian">detail_pembelian</a></li>
+                <li><a href="../detail_penjualan">detail_penjualan</a></li>
+                <li><a href="../diskon">diskon</a></li>
+                <li><a href="../gudang">gudang</a></li>
+                <li><a href="../pegawai">pegawai</a></li>
+                <li><a href="../pelanggan">pelanggan</a></li>
+                <li><a href="../pembelian">pembelian</a></li>
+                <li><a href="../penjualan">penjualan</a></li>
+                <li><a href="../pos" class="active">pos</a></li>
+                <li><a href="../rekonsiliasi">rekonsiliasi</a></li>
+                <li><a href="../stok">stok</a></li>
+                <li><a href="../stok_sn">stok_sn</a></li>
+                <li><a href="../supplier">supplier</a></li>
+            </ul>
+        </nav>
+        <div class="main-content">
+            <h2 style="margin-top:0;">Halaman POS</h2>
+            <div class="flex-row">
+                <div class="form-pos">
+                    <h3>Transaksi</h3>
+                    <label>Pelanggan:</label>
+                    <select id="pelanggan"></select>
+                    <br><br>
+                    <label>Pegawai/Kasir:</label>
+                    <select id="pegawai">
+                        <?php
+                        $pg = mysqli_query($koneksi, "SELECT * FROM pegawai ORDER BY nama_pegawai");
+                        while($p = mysqli_fetch_assoc($pg)){
+                            echo "<option value='{$p['id_pegawai']}'>{$p['nama_pegawai']}</option>";
+                        }
+                        ?>
+                    </select>
+                    <br><br>
+                    <label>Metode Pembayaran:</label>
+                    <select id="metode" name="metode">
+                        <option value="cash">Cash</option>
+                        <option value="qris">QRIS</option>
+                        <option value="ewallet">E-Wallet</option>
+                        <option value="bank">Bank Transfer</option>
+                    </select>
+                    <br><br>
+                    <label>Scan / Input Kode Barang atau IMEI/SN:</label>
+                    <input type="text" id="scan_kode" placeholder="SKU/kode_barang/IMEI/SN">
+                    <div id="scan_msg" style="color:red;min-height:18px;margin-bottom:8px;"></div>
+                    <br>
+                    <table class="table-cart" id="tabel_keranjang">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Nama Barang</th>
+                                <th>Harga</th>
+                                <th>IMEI/SN</th>
+                                <th>Jumlah</th>
+                                <th>Total</th>
+                                <th>Hapus</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <br>
+                    <label>Total:</label>
+                    <input type="text" id="total" readonly><br><br>
+                    <label>Bayar:</label>
+                    <input type="number" id="bayar" value="0"><br><br>
+                    <label>Sisa Bayar:</label>
+                    <input type="text" id="sisa" readonly><br><br>
+                    <button id="simpan_transaksi">Simpan Transaksi</button>
+                </div>
+                <div class="form-pelanggan">
+                    <h3>Tambah Pelanggan Baru</h3>
+                    <form id="form_pelanggan">
+                        <input type="text" name="nama_pelanggan" placeholder="Nama" required><br><br>
+                        <input type="text" name="kontak" placeholder="Kontak"><br><br>
+                        <button type="submit">Simpan Pelanggan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- FORM KANAN: PELANGGAN -->
-    <div class="form-pelanggan">
-        <h3>Tambah Pelanggan Baru</h3>
-        <form id="form_pelanggan">
-            <input type="text" name="nama_pelanggan" placeholder="Nama" required><br><br>
-            <input type="text" name="kontak" placeholder="Kontak"><br><br>
-            <button type="submit">Simpan Pelanggan</button>
-        </form>
-    </div>
-</div>
-
 <script>
 let keranjang = [];
 
@@ -281,10 +404,5 @@ $("#simpan_transaksi").click(function(){
     });
 });
 </script>
-
-<style>
-.container { display: flex; gap: 20px; }
-.form-pos, .form-pelanggan { border: 1px solid #ccc; padding: 15px; width: 50%; }
-</style>
 </body>
 </html>
