@@ -127,6 +127,7 @@ if (isset($_POST['simpan'])) {
                 <li><a href="../stok">stok</a></li>
                 <li><a href="../stok_sn">stok_sn</a></li>
                 <li><a href="../supplier">supplier</a></li>
+                <li><a href="../batch" >batch</a></li>
             </ul>
         </nav>
         <div class="main-content">

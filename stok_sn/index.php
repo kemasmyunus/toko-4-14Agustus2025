@@ -113,9 +113,9 @@ $result = mysqli_query($koneksi, $query);
                 <li><a href="../pos">pos</a></li>
                 <li><a href="../rekonsiliasi">rekonsiliasi</a></li>
                 <li><a href="../stok">stok</a></li>
-                <li><a href="../stok_sn">stok_sn</a></li>
+                <li><a href="../stok_sn" class="active">stok_sn</a></li>
                 <li><a href="../supplier">supplier</a></li>
-                <li><a href="../batch">batch</a></li>                <li><a href="../batch">batch</a></li>
+                <li><a href="../batch" >batch</a></li>
             </ul>
         </nav>
         <div class="main-content">
