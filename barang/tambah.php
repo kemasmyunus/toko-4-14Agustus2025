@@ -9,9 +9,10 @@ if (isset($_POST['simpan'])) {
     $brand       = $_POST['brand'];
     $kategori    = $_POST['kategori'];
     $harga_jual  = $_POST['harga_jual_default'];
+    $sn          = isset($_POST['sn']) ? 1 : 0;
 
-    $query = mysqli_query($koneksi, "INSERT INTO barang (kode_barang, sku, nama_barang, varian, brand, kategori, harga_jual_default)
-                                     VALUES ('$kode_barang', '$sku', '$nama_barang', '$varian', '$brand', '$kategori', '$harga_jual')");
+    $query = mysqli_query($koneksi, "INSERT INTO barang (kode_barang, sku, nama_barang, varian, brand, kategori, harga_jual_default, sn)
+                                     VALUES ('$kode_barang', '$sku', '$nama_barang', '$varian', '$brand', '$kategori', '$harga_jual', '$sn')");
 
     if ($query) {
         header("Location: index.php");
@@ -152,6 +153,9 @@ if (isset($_POST['simpan'])) {
                 <input type="text" name="kategori">
                 <label>Harga Jual:</label>
                 <input type="number" name="harga_jual_default" required>
+                <label>
+                    <input type="checkbox" name="sn" value="1"> Ada SN
+                </label>
                 <button type="submit" name="simpan">Simpan</button>
             </form>
         </div>

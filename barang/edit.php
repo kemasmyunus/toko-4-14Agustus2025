@@ -17,6 +17,7 @@ if (isset($_POST['update'])) {
     $brand       = $_POST['brand'];
     $kategori    = $_POST['kategori'];
     $harga_jual  = $_POST['harga_jual_default'];
+    $sn          = isset($_POST['sn']) ? 1 : 0;
 
     $update = mysqli_query($koneksi, "UPDATE barang SET 
                                         kode_barang='$kode_barang',
@@ -25,7 +26,8 @@ if (isset($_POST['update'])) {
                                         varian='$varian',
                                         brand='$brand',
                                         kategori='$kategori',
-                                        harga_jual_default='$harga_jual'
+                                        harga_jual_default='$harga_jual',
+                                        sn='$sn'
                                       WHERE id_barang='$id'");
 
     if ($update) {
@@ -167,6 +169,9 @@ if (isset($_POST['update'])) {
                 <input type="text" name="kategori" value="<?= $data['kategori'] ?>">
                 <label>Harga Jual:</label>
                 <input type="number" name="harga_jual_default" value="<?= $data['harga_jual_default'] ?>" required>
+                <label>
+                    <input type="checkbox" name="sn" value="1" <?= $data['sn'] == 1 ? 'checked' : '' ?>> Ada SN
+                </label>
                 <button type="submit" name="update">Update</button>
             </form>
         </div>

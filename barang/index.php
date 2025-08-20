@@ -121,6 +121,7 @@ include "../koneksi.php";
                     <th>Brand</th>
                     <th>Kategori</th>
                     <th>Harga Jual</th>
+                    <th>SN</th>
                     <th>Aksi</th>
                 </tr>
                 <?php
@@ -135,6 +136,7 @@ include "../koneksi.php";
                             <td>{$row['brand']}</td>
                             <td>{$row['kategori']}</td>
                             <td>Rp. {$row['harga_jual_default']}</td>
+                            <td>" . ($row['sn'] == 1 ? 'Ya' : 'Tidak') . "</td>
                             <td>
                                 <a href='edit.php?id={$row['id_barang']}'>Edit</a> | 
                                 <a href='hapus.php?id={$row['id_barang']}' onclick=\"return confirm('Yakin hapus?')\">Hapus</a>
