@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 17, 2025 at 06:34 AM
+-- Generation Time: Aug 20, 2025 at 05:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -52,7 +52,8 @@ INSERT INTO `barang` (`id_barang`, `kode_barang`, `sku`, `nama_barang`, `varian`
 (15, 'BRG006', 'SKU006', 'Charger Fast Charging', '25W', 'Anker', 'Aksesoris', 150000, 0),
 (16, 'BRG007', 'SKU007', 'Headset Bluetooth', 'v5.0', 'Sony', 'Aksesoris', 350000, 0),
 (17, 'BRG008', 'SKU008', 'Powerbank', '20000mAh', 'Xiaomi', 'Aksesoris', 250000, 0),
-(18, 'BRG009', 'SKU009', 'Casing HP', 'Softcase', 'Ugreen', 'Aksesoris', 50000, 0);
+(18, 'BRG009', 'SKU009', 'Casing HP', 'Softcase', 'Ugreen', 'Aksesoris', 50000, 0),
+(21, '333', '333', 'poco', '123', '123', '123', 123, 1);
 
 -- --------------------------------------------------------
 
@@ -70,6 +71,14 @@ CREATE TABLE `detail_pembelian` (
   `id_gudang` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `detail_pembelian`
+--
+
+INSERT INTO `detail_pembelian` (`id_detail_pembelian`, `id_pembelian`, `id_barang`, `jumlah`, `harga_beli`, `harga_jual`, `id_gudang`) VALUES
+(2, 1, 13, 200, 200, 300, 1),
+(3, 1, 14, 32, 321, 123, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -81,6 +90,8 @@ CREATE TABLE `detail_penjualan` (
   `id_penjualan` int(11) NOT NULL,
   `id_barang` int(11) NOT NULL,
   `imei_sn` varchar(20) NOT NULL,
+  `imei1` varchar(50) DEFAULT NULL,
+  `imei2` varchar(50) DEFAULT NULL,
   `jumlah` int(11) NOT NULL,
   `harga_jual` decimal(10,0) NOT NULL,
   `potongan1` decimal(10,0) NOT NULL,
@@ -93,25 +104,30 @@ CREATE TABLE `detail_penjualan` (
 -- Dumping data for table `detail_penjualan`
 --
 
-INSERT INTO `detail_penjualan` (`id_detail_penjualan`, `id_penjualan`, `id_barang`, `imei_sn`, `jumlah`, `harga_jual`, `potongan1`, `potongan2`, `potongan3`, `total_setelah_potongan`) VALUES
-(1, 1, 1, '', 1, 2500000, 0, 0, 0, 2500000),
-(2, 1, 13, '', 1, 2200000, 0, 0, 0, 2200000),
-(3, 2, 1, '', 4, 2500000, 0, 0, 0, 10000000),
-(4, 2, 11, '', 1, 3200000, 0, 0, 0, 3200000),
-(5, 2, 12, '', 1, 13000000, 0, 0, 0, 13000000),
-(6, 2, 13, '', 1, 2200000, 0, 0, 0, 2200000),
-(7, 3, 18, '', 2, 50000, 0, 0, 0, 100000),
-(8, 4, 12, '0101', 1, 13000000, 200000, 500000, 0, 12300000),
-(9, 4, 11, '0001', 1, 3200000, 0, 0, 0, 3200000),
-(10, 5, 16, '', 2, 350000, 0, 0, 0, 700000),
-(11, 5, 12, '1234', 1, 13000000, 200000, 500000, 0, 12300000),
-(12, 5, 12, '321', 1, 13000000, 200000, 500000, 0, 12300000),
-(13, 6, 1, '123123', 1, 2500000, 200000, 0, 0, 2300000),
-(14, 6, 1, '321321', 1, 2500000, 200000, 0, 0, 2300000),
-(15, 6, 11, '333', 1, 3200000, 5000000, 120000, 0, -1920000),
-(16, 7, 18, '', 1, 50000, 123, 200000, 0, -150123),
-(17, 7, 16, '', 1, 350000, 0, 0, 0, 350000),
-(18, 8, 16, '', 1, 350000, 0, 0, 0, 350000);
+INSERT INTO `detail_penjualan` (`id_detail_penjualan`, `id_penjualan`, `id_barang`, `imei_sn`, `imei1`, `imei2`, `jumlah`, `harga_jual`, `potongan1`, `potongan2`, `potongan3`, `total_setelah_potongan`) VALUES
+(1, 1, 1, '', NULL, NULL, 1, 2500000, 0, 0, 0, 2500000),
+(2, 1, 13, '', NULL, NULL, 1, 2200000, 0, 0, 0, 2200000),
+(3, 2, 1, '', NULL, NULL, 4, 2500000, 0, 0, 0, 10000000),
+(4, 2, 11, '', NULL, NULL, 1, 3200000, 0, 0, 0, 3200000),
+(5, 2, 12, '', NULL, NULL, 1, 13000000, 0, 0, 0, 13000000),
+(6, 2, 13, '', NULL, NULL, 1, 2200000, 0, 0, 0, 2200000),
+(7, 3, 18, '', NULL, NULL, 2, 50000, 0, 0, 0, 100000),
+(8, 4, 12, '0101', NULL, NULL, 1, 13000000, 200000, 500000, 0, 12300000),
+(9, 4, 11, '0001', NULL, NULL, 1, 3200000, 0, 0, 0, 3200000),
+(10, 5, 16, '', NULL, NULL, 2, 350000, 0, 0, 0, 700000),
+(11, 5, 12, '1234', NULL, NULL, 1, 13000000, 200000, 500000, 0, 12300000),
+(12, 5, 12, '321', NULL, NULL, 1, 13000000, 200000, 500000, 0, 12300000),
+(13, 6, 1, '123123', NULL, NULL, 1, 2500000, 200000, 0, 0, 2300000),
+(14, 6, 1, '321321', NULL, NULL, 1, 2500000, 200000, 0, 0, 2300000),
+(15, 6, 11, '333', NULL, NULL, 1, 3200000, 5000000, 120000, 0, -1920000),
+(16, 7, 18, '', NULL, NULL, 1, 50000, 123, 200000, 0, -150123),
+(17, 7, 16, '', NULL, NULL, 1, 350000, 0, 0, 0, 350000),
+(18, 8, 16, '', NULL, NULL, 1, 350000, 0, 0, 0, 350000),
+(19, 9, 15, '', NULL, NULL, 1, 150000, 0, 0, 0, 150000),
+(20, 10, 15, '', NULL, NULL, 1, 150000, 0, 0, 0, 150000),
+(21, 10, 18, '', NULL, NULL, 1, 50000, 123, 200000, 200, -150323),
+(22, 12, 11, '234', '545434', '', 1, 3200000, 5000000, 120000, 0, -1920000),
+(23, 13, 11, '234', '545434', '', 1, 3200000, 5000000, 120000, 0, -1920000);
 
 -- --------------------------------------------------------
 
@@ -174,7 +190,9 @@ CREATE TABLE `pelanggan` (
 INSERT INTO `pelanggan` (`id_pelanggan`, `nama_pelanggan`, `kontak`) VALUES
 (2, 'yuki', '123'),
 (3, 'kira', '123'),
-(5, 'kias', '123321');
+(5, 'kias', '123321'),
+(7, '4444', '4444'),
+(8, '333', '333');
 
 -- --------------------------------------------------------
 
@@ -189,6 +207,13 @@ CREATE TABLE `pembelian` (
   `total_pembelian` decimal(10,0) NOT NULL,
   `id_pegawai` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pembelian`
+--
+
+INSERT INTO `pembelian` (`id_pembelian`, `tanggal_pembelian`, `id_supplier`, `total_pembelian`, `id_pegawai`) VALUES
+(1, '2025-08-17', 1, 2000, 2);
 
 -- --------------------------------------------------------
 
@@ -220,7 +245,12 @@ INSERT INTO `penjualan` (`id_penjualan`, `tanggal_penjualan`, `id_pelanggan`, `i
 (5, '2025-08-16', 2, 2, 'bank', 26700000, 1400000, 25300000, 0),
 (6, '2025-08-17', 5, 1, 'cash', 8200000, 5520000, 2680000, 0),
 (7, '2025-08-17', 2, 1, 'cash', 400000, 200123, 199877, 0),
-(8, '2025-08-17', 2, 2, 'ewallet', 350000, 0, 350000, 0);
+(8, '2025-08-17', 2, 2, 'ewallet', 350000, 0, 350000, 0),
+(9, '2025-08-17', 2, 2, 'ewallet', 150000, 0, 150000, 0),
+(10, '2025-08-17', 3, 1, 'cash', 200000, 200446, -446, -892),
+(11, '2025-08-20', 7, 2, 'bank', 3200000, 5120000, -1920000, -3840000),
+(12, '2025-08-20', 7, 2, 'bank', 3200000, 5120000, -1920000, -3840000),
+(13, '2025-08-20', 7, 2, 'bank', 3200000, 5120000, -1920000, -3840000);
 
 -- --------------------------------------------------------
 
@@ -246,11 +276,13 @@ INSERT INTO `potongan_barang` (`id_potongan`, `id_barang`, `nama_potongan`, `nil
 (1, 13, '123', 123, '2025-08-01', '2025-08-14', 'nonaktif'),
 (2, 18, '123', 123, '2025-08-14', '2025-08-15', 'nonaktif'),
 (3, 18, '123', 200000, '2025-08-14', '2025-08-16', 'nonaktif'),
-(4, 12, 'potongan natal', 200000, '2025-08-15', '2025-08-22', 'aktif'),
+(4, 12, 'potongan natalaaa', 200000, '2025-08-15', '2025-08-22', 'aktif'),
 (5, 12, 'potongan tahun baru', 500000, '2025-08-07', '2025-08-27', 'aktif'),
 (6, 11, 'Potongan Natal', 5000000, '2025-08-01', '2025-08-29', 'aktif'),
 (7, 11, 'Potongan tahun baru', 120000, '2025-08-01', '2025-08-30', 'aktif'),
-(8, 1, 'Potongan Flash sale', 200000, '2025-08-01', '2025-08-25', 'aktif');
+(8, 1, 'Potongan Flash sale', 200000, '2025-08-01', '2025-08-25', 'aktif'),
+(9, 18, 'potongan tahunan', 200, '2025-08-02', '2025-08-28', 'aktif'),
+(10, 18, '123', 123, '2025-08-01', '2025-08-27', 'aktif');
 
 -- --------------------------------------------------------
 
@@ -303,7 +335,13 @@ INSERT INTO `rekonsiliasi` (`id_rekonsiliasi`, `id_penjualan`, `metode_pembayara
 (1, 5, 'bank', '2025-08-16', 'lunas', 25300000),
 (2, 6, 'cash', '2025-08-17', 'lunas', 2680000),
 (3, 7, 'cash', '2025-08-17', 'lunas', 199877),
-(4, 8, 'ewallet', '2025-08-17', 'lunas', 350000);
+(4, 8, 'ewallet', '2025-08-17', 'lunas', 350000),
+(5, 7, 'ewallet', '2025-08-13', 'belum lunas', 123),
+(6, 9, 'ewallet', '2025-08-17', 'lunas', 150000),
+(7, 10, 'cash', '2025-08-17', 'belum lunas', -446),
+(8, 11, 'bank', '2025-08-20', 'belum lunas', -1920000),
+(9, 12, 'bank', '2025-08-20', 'belum lunas', -1920000),
+(10, 13, 'bank', '2025-08-20', 'belum lunas', -1920000);
 
 -- --------------------------------------------------------
 
@@ -323,8 +361,10 @@ CREATE TABLE `stok` (
 --
 
 INSERT INTO `stok` (`id_stok`, `id_barang`, `id_gudang`, `jumlah`) VALUES
-(3, 18, 1, 97),
-(4, 16, 1, 96);
+(3, 21, 1, 96),
+(4, 16, 1, 96),
+(5, 15, 1, 98),
+(6, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -352,8 +392,9 @@ INSERT INTO `stok_sn` (`id_stok_sn`, `id_barang`, `id_gudang`, `imei_sn`, `imei1
 (4, 12, 1, '1234', NULL, NULL, 'terjual'),
 (5, 12, 1, '321', NULL, NULL, 'terjual'),
 (6, 1, 1, '321321', NULL, NULL, 'terjual'),
-(7, 1, 1, '123123', NULL, NULL, 'terjual'),
-(8, 11, 1, '333', NULL, NULL, 'terjual');
+(7, 1, 1, '123123', '', '32132133', 'tersedia'),
+(8, 11, 1, '333', NULL, NULL, 'terjual'),
+(9, 11, 2, '234', '545434', '', 'terjual');
 
 -- --------------------------------------------------------
 
@@ -485,55 +526,55 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `detail_pembelian`
 --
 ALTER TABLE `detail_pembelian`
-  MODIFY `id_detail_pembelian` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_detail_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `detail_penjualan`
 --
 ALTER TABLE `detail_penjualan`
-  MODIFY `id_detail_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_detail_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `gudang`
 --
 ALTER TABLE `gudang`
-  MODIFY `id_gudang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_gudang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pegawai`
 --
 ALTER TABLE `pegawai`
-  MODIFY `id_pegawai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_pegawai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pelanggan`
 --
 ALTER TABLE `pelanggan`
-  MODIFY `id_pelanggan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_pelanggan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `pembelian`
 --
 ALTER TABLE `pembelian`
-  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pembelian` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `potongan_barang`
 --
 ALTER TABLE `potongan_barang`
-  MODIFY `id_potongan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_potongan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `potongan_barang_riwayat`
@@ -545,25 +586,25 @@ ALTER TABLE `potongan_barang_riwayat`
 -- AUTO_INCREMENT for table `rekonsiliasi`
 --
 ALTER TABLE `rekonsiliasi`
-  MODIFY `id_rekonsiliasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_rekonsiliasi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `id_stok` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_stok` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `stok_sn`
 --
 ALTER TABLE `stok_sn`
-  MODIFY `id_stok_sn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_stok_sn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
