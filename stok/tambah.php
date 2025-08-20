@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Ambil barang (sn = 0)
-$barang = mysqli_query($koneksi, "SELECT id_barang, brand, nama_barang, varian FROM barang WHERE sn=0");
+// Ambil barang (semua, sn=0 atau sn=1)
+$barang = mysqli_query($koneksi, "SELECT id_barang, brand, nama_barang, varian FROM barang");
 
 // Ambil gudang
 $gudang = mysqli_query($koneksi, "SELECT id_gudang, nama_gudang, lokasi FROM gudang");
