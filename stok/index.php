@@ -6,7 +6,6 @@ $query = "
     SELECT stok.*, barang.nama_barang, barang.sn
     FROM stok
     JOIN barang ON stok.id_barang = barang.id_barang
-    WHERE barang.sn = 0
 ";
 $result = mysqli_query($koneksi, $query);
 ?>
