@@ -5,9 +5,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_barang = $_POST['id_barang'];
     $id_gudang = $_POST['id_gudang'];
     $imei_sn = $_POST['imei_sn'];
+    $imei1 = $_POST['imei1'];
+    $imei2 = $_POST['imei2'];
     $status = $_POST['status'];
 
-    $insert = mysqli_query($koneksi, "INSERT INTO stok_sn (id_barang, id_gudang, imei_sn, status) VALUES ('$id_barang','$id_gudang','$imei_sn','$status')");
+    $insert = mysqli_query($koneksi, "INSERT INTO stok_sn (id_barang, id_gudang, imei_sn, imei1, imei2, status) VALUES ('$id_barang','$id_gudang','$imei_sn','$imei1','$imei2','$status')");
     if ($insert) {
         header('Location: index.php');
         exit;
@@ -162,6 +164,12 @@ $gudang = mysqli_query($koneksi, "SELECT id_gudang, nama_gudang, lokasi FROM gud
 
                 <label>IMEI/SN:</label>
                 <input type="text" name="imei_sn" required>
+
+                <label>IMEI1:</label>
+                <input type="text" name="imei1">
+
+                <label>IMEI2:</label>
+                <input type="text" name="imei2">
 
                 <label>Status:</label>
                 <select name="status" required>

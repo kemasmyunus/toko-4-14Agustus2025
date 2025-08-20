@@ -127,6 +127,8 @@ $result = mysqli_query($koneksi, $query);
                         <th>Barang</th>
                         <th>Gudang</th>
                         <th>IMEI/SN</th>
+                        <th>IMEI1</th>
+                        <th>IMEI2</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -136,6 +138,8 @@ $result = mysqli_query($koneksi, $query);
                         <td><?= $row['brand'] . ' ' . $row['nama_barang'] . ' ' . $row['varian'] ?></td>
                         <td><?= $row['nama_gudang'] ?> (<?= $row['lokasi'] ?>)</td>
                         <td><?= $row['imei_sn'] ?></td>
+                        <td><?= $row['imei1'] ?></td>
+                        <td><?= $row['imei2'] ?></td>
                         <td><?= ucfirst($row['status']) ?></td>
                         <td>
                             <a href="edit.php?id=<?= $row['id_stok_sn'] ?>">Edit</a> |

@@ -17,9 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_barang = $_POST['id_barang'];
     $id_gudang = $_POST['id_gudang'];
     $imei_sn = $_POST['imei_sn'];
+    $imei1 = $_POST['imei1'];
+    $imei2 = $_POST['imei2'];
     $status = $_POST['status'];
 
-    $update = mysqli_query($koneksi, "UPDATE stok_sn SET id_barang='$id_barang', id_gudang='$id_gudang', imei_sn='$imei_sn', status='$status' WHERE id_stok_sn='$id'");
+    $update = mysqli_query($koneksi, "UPDATE stok_sn SET id_barang='$id_barang', id_gudang='$id_gudang', imei_sn='$imei_sn', imei1='$imei1', imei2='$imei2', status='$status' WHERE id_stok_sn='$id'");
     if ($update) {
         header('Location: index.php');
         exit;
@@ -172,6 +174,12 @@ $gudang = mysqli_query($koneksi, "SELECT id_gudang, nama_gudang, lokasi FROM gud
 
                 <label>IMEI/SN:</label>
                 <input type="text" name="imei_sn" value="<?= $data['imei_sn'] ?>" required>
+
+                <label>IMEI1:</label>
+                <input type="text" name="imei1" value="<?= $data['imei1'] ?>">
+
+                <label>IMEI2:</label>
+                <input type="text" name="imei2" value="<?= $data['imei2'] ?>">
 
                 <label>Status:</label>
                 <select name="status" required>
