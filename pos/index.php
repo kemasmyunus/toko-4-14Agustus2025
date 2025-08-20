@@ -178,6 +178,13 @@ ini_set('display_errors', 1);
                     <label>Scan / Input Kode Barang atau IMEI/SN:</label>
                     <input type="text" id="scan_kode" placeholder="SKU/kode_barang/IMEI/SN">
                     <div id="scan_msg" style="color:red;min-height:18px;margin-bottom:8px;"></div>
+                    <div id="sn_inputs" style="display:none;">
+                        <label>IMEI1:</label>
+                        <input type="text" id="input_imei1" placeholder="IMEI1">
+                        <label>IMEI2:</label>
+                        <input type="text" id="input_imei2" placeholder="IMEI2">
+                        <button type="button" id="btn_add_sn">Tambah ke Keranjang</button>
+                    </div>
                     <br>
                     <table class="table-cart" id="tabel_keranjang">
                         <thead>
@@ -186,6 +193,8 @@ ini_set('display_errors', 1);
                                 <th>Nama Barang</th>
                                 <th>Harga</th>
                                 <th>IMEI/SN</th>
+                                <th>IMEI1</th>
+                                <th>IMEI2</th>
                                 <th>Jumlah</th>
                                 <th>Total</th>
                                 <th>Hapus</th>
@@ -215,6 +224,7 @@ ini_set('display_errors', 1);
     </div>
 <script>
 let keranjang = [];
+let lastBarangSN = null; // Untuk menyimpan barang SN yang discan
 
 // Load pelanggan
 function loadPelanggan(){
@@ -239,6 +249,8 @@ $("#scan_kode").on("keypress", function(e){
         e.preventDefault();
         let kode = $(this).val().trim();
         $("#scan_msg").text(""); // reset pesan
+        $("#sn_inputs").hide();
+        lastBarangSN = null;
         if(!kode) return;
 
         $.get("get_barang.php", {kode: kode}, function(res){
@@ -246,9 +258,14 @@ $("#scan_kode").on("keypress", function(e){
             try { barang = JSON.parse(res); } catch(e) {}
             if(barang && typeof barang.sn !== "undefined") {
                 if(barang.sn == "1"){
-                    $("#scan_msg").text("Barang ini ber-SN. Silakan masukkan IMEI/SN (imei1/imei2) pada kolom scan.");
+                    // Tampilkan input IMEI1 dan IMEI2
+                    lastBarangSN = barang;
+                    $("#sn_inputs").show();
+                    $("#input_imei1").val(barang.stok_sn && barang.stok_sn.imei1 ? barang.stok_sn.imei1 : "");
+                    $("#input_imei2").val(barang.stok_sn && barang.stok_sn.imei2 ? barang.stok_sn.imei2 : "");
+                    $("#scan_msg").text("Barang ini ber-SN. Silakan masukkan IMEI1/IMEI2 jika ada, lalu klik Tambah ke Keranjang.");
                 } else {
-                    tambahKeranjang(barang, "");
+                    tambahKeranjang(barang, "", "", "");
                     $("#scan_kode").val("");
                 }
             } else {
@@ -259,6 +276,8 @@ $("#scan_kode").on("keypress", function(e){
                         if(obj.barang && obj.stok_sn){
                             let barang = obj.barang;
                             let imei = obj.stok_sn.imei_sn;
+                            let imei1 = obj.stok_sn.imei1 || "";
+                            let imei2 = obj.stok_sn.imei2 || "";
                             // Pastikan barang SN
                             if(barang.sn == "1"){
                                 // Cek apakah sudah di keranjang
@@ -266,7 +285,7 @@ $("#scan_kode").on("keypress", function(e){
                                 if(idx > -1){
                                     $("#scan_msg").text("IMEI/SN sudah di keranjang!");
                                 } else {
-                                    tambahKeranjang(barang, imei);
+                                    tambahKeranjang(barang, imei, imei1, imei2);
                                     $("#scan_kode").val("");
                                     $("#scan_msg").text(""); // hapus pesan jika berhasil input IMEI/SN
                                 }
@@ -283,7 +302,32 @@ $("#scan_kode").on("keypress", function(e){
     }
 });
 
-function tambahKeranjang(barang, imei){
+// Handler tombol tambah SN ke keranjang
+$("#btn_add_sn").on("click", function(){
+    if(!lastBarangSN) return;
+    let imei = $("#scan_kode").val().trim();
+    let imei1 = $("#input_imei1").val().trim();
+    let imei2 = $("#input_imei2").val().trim();
+    if(!imei){
+        $("#scan_msg").text("IMEI/SN harus diisi!");
+        return;
+    }
+    // Cek duplikat di keranjang
+    let idx = keranjang.findIndex(b => b.id_barang == lastBarangSN.id_barang && b.imei_sn == imei);
+    if(idx > -1){
+        $("#scan_msg").text("IMEI/SN sudah di keranjang!");
+        return;
+    }
+    tambahKeranjang(lastBarangSN, imei, imei1, imei2);
+    $("#scan_kode").val("");
+    $("#input_imei1").val("");
+    $("#input_imei2").val("");
+    $("#sn_inputs").hide();
+    $("#scan_msg").text("");
+    lastBarangSN = null;
+});
+
+function tambahKeranjang(barang, imei, imei1, imei2){
     let totalPotongan = 0;
     let potonganList = [];
     if (barang.potongan_list && barang.potongan_list.length > 0) {
@@ -300,6 +344,8 @@ function tambahKeranjang(barang, imei){
         keranjang.push({
             ...barang, 
             imei_sn: imei, 
+            imei1: imei1,
+            imei2: imei2,
             jumlah: 1,
             potongan_list: potonganList,
             total_potongan: totalPotongan
@@ -312,6 +358,8 @@ function tambahKeranjang(barang, imei){
             keranjang.push({
                 ...barang, 
                 imei_sn: "", 
+                imei1: "",
+                imei2: "",
                 jumlah: 1,
                 potongan_list: potonganList,
                 total_potongan: totalPotongan
@@ -330,7 +378,9 @@ function renderKeranjang(){
             <td>${item.kode_barang}</td>
             <td>${item.nama_barang}</td>
             <td>${item.harga_jual_default}</td>
-            <td>${item.imei_sn}</td>
+            <td>${item.imei_sn || ""}</td>
+            <td>${item.imei1 || ""}</td>
+            <td>${item.imei2 || ""}</td>
             <td>${item.jumlah}</td>
             <td>${total}</td>
             <td><button onclick="hapusItem(${i})" class="btn-remove">X</button></td>

@@ -32,6 +32,14 @@ if(mysqli_num_rows($q) > 0){
     // Jika tidak ditemukan di barang, cek ke stok_sn (IMEI/SN)
     $imei = $_GET['kode'];
     $q_sn = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei_sn='$imei' AND status='tersedia' LIMIT 1");
+    if(mysqli_num_rows($q_sn) == 0) {
+        // Cek juga ke imei1
+        $q_sn = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei1='$imei' AND status='tersedia' LIMIT 1");
+    }
+    if(mysqli_num_rows($q_sn) == 0) {
+        // Cek juga ke imei2
+        $q_sn = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei2='$imei' AND status='tersedia' LIMIT 1");
+    }
     if(mysqli_num_rows($q_sn) > 0){
         $stok_sn = mysqli_fetch_assoc($q_sn);
         $barang = mysqli_query($koneksi, "SELECT * FROM barang WHERE id_barang='{$stok_sn['id_barang']}' LIMIT 1");
@@ -48,6 +56,9 @@ if(mysqli_num_rows($q) > 0){
             $b['potongan_list'] = $potongan;
             $b['sn'] = isset($b['sn']) ? (string)$b['sn'] : "0";
             $b['is_sn'] = ($b['sn'] === "1") ? 1 : 0;
+            // Tambahkan imei1 dan imei2 ke response stok_sn
+            $stok_sn['imei1'] = isset($stok_sn['imei1']) ? $stok_sn['imei1'] : '';
+            $stok_sn['imei2'] = isset($stok_sn['imei2']) ? $stok_sn['imei2'] : '';
             echo json_encode(['barang'=>$b, 'stok_sn'=>$stok_sn]);
             exit;
         }

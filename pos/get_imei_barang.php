@@ -3,6 +3,14 @@ include "../koneksi.php";
 $imei = $_GET['imei'] ?? '';
 if(!$imei) { echo ""; exit; }
 $q = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei_sn='$imei' AND status='tersedia' LIMIT 1");
+if(mysqli_num_rows($q) == 0) {
+    // Cek juga ke imei1
+    $q = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei1='$imei' AND status='tersedia' LIMIT 1");
+}
+if(mysqli_num_rows($q) == 0) {
+    // Cek juga ke imei2
+    $q = mysqli_query($koneksi, "SELECT * FROM stok_sn WHERE imei2='$imei' AND status='tersedia' LIMIT 1");
+}
 if(mysqli_num_rows($q) > 0){
     $stok_sn = mysqli_fetch_assoc($q);
     $barang = mysqli_query($koneksi, "SELECT * FROM barang WHERE id_barang='{$stok_sn['id_barang']}' LIMIT 1");

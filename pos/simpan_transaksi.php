@@ -39,6 +39,8 @@ foreach($keranjang as $b){
     $total_item = $harga * $jumlah;
     $imei = $b['imei_sn'];
     $sn = $b['sn'];
+    $imei1 = isset($b['imei1']) ? $b['imei1'] : '';
+    $imei2 = isset($b['imei2']) ? $b['imei2'] : '';
 
     // Ambil potongan (maks 3)
     $pot1 = $pot2 = $pot3 = 0;
@@ -51,14 +53,15 @@ foreach($keranjang as $b){
     $total_setelah_potongan = ($harga * $jumlah) - ($total_potongan_item * $jumlah);
 
     mysqli_query($koneksi, "INSERT INTO detail_penjualan 
-    (id_penjualan, id_barang, imei_sn, jumlah, harga_jual, potongan1, potongan2, potongan3, total_setelah_potongan) 
+    (id_penjualan, id_barang, imei_sn, imei1, imei2, jumlah, harga_jual, potongan1, potongan2, potongan3, total_setelah_potongan) 
     VALUES 
-    ('$id_penjualan', '$id_barang', '$imei', '$jumlah', '$harga', '$pot1', '$pot2', '$pot3', '$total_setelah_potongan')");
+    ('$id_penjualan', '$id_barang', '$imei', '$imei1', '$imei2', '$jumlah', '$harga', '$pot1', '$pot2', '$pot3', '$total_setelah_potongan')");
 
     if($sn == "1"){
         // Update stok IMEI/SN
         if(!empty($imei)){
-            mysqli_query($koneksi, "UPDATE stok_sn SET status='terjual' WHERE imei_sn='$imei' AND id_barang='$id_barang'");
+            // Update juga imei1 dan imei2 jika ada
+            mysqli_query($koneksi, "UPDATE stok_sn SET status='terjual', imei1='$imei1', imei2='$imei2' WHERE imei_sn='$imei' AND id_barang='$id_barang'");
         }
         // Tidak update stok biasa
     } else {
